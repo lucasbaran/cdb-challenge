@@ -1,0 +1,53 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="card">
+  <h2>Calculadora de CDB</h2>
+
+  <div class="form-group">
+    <label for="initialValue" class="label">Valor Inicial (R$)</label>
+    <input
+      id="initialValue"
+      type="number"
+      step="0.01"
+      min="0.01"
+      class="input"
+      [class.error]="initialValueControl.invalid && (submitted || initialValueControl.touched)"
+      formControlName="initialValue"
+      placeholder="Ex: 1000,00"
+      autocomplete="off" />
+    @if (initialValueControl.invalid && (submitted || initialValueControl.touched)) {
+      <span class="error-message">
+        @if (initialValueControl.errors?.['required']) {
+          Valor inicial é obrigatório.
+        } @else if (initialValueControl.errors?.['positiveNumber']) {
+          Valor deve ser maior que zero.
+        }
+      </span>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="months" class="label">Prazo (meses)</label>
+    <input
+      id="months"
+      type="number"
+      min="2"
+      step="1"
+      class="input"
+      [class.error]="monthsControl.invalid && (submitted || monthsControl.touched)"
+      formControlName="months"
+      placeholder="Ex: 12"
+      autocomplete="off" />
+    @if (monthsControl.invalid && (submitted || monthsControl.touched)) {
+      <span class="error-message">
+        @if (monthsControl.errors?.['required']) {
+          Prazo é obrigatório.
+        } @else if (monthsControl.errors?.['minInteger']) {
+          Prazo deve ser maior que 1 mês.
+        }
+      </span>
+    }
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+    Calcular
+  </button>
+</form>

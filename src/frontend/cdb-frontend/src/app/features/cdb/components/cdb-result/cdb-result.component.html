@@ -1,0 +1,40 @@
+<div class="card">
+  <h2>Resultado do Cálculo</h2>
+
+  <div class="result-grid">
+    <div class="result-item">
+      <div class="result-label">Valor Inicial</div>
+      <div class="result-value">{{ result.initialValue | currencyPtBr }}</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Prazo</div>
+      <div class="result-value">{{ result.months }} meses</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Valor Bruto</div>
+      <div class="result-value positive">{{ result.grossValue | currencyPtBr }}</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Rendimento Bruto</div>
+      <div class="result-value positive">{{ result.grossProfit | currencyPtBr }}</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Alíquota de IR</div>
+      <div class="result-value">{{ taxRatePercent }}</div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-label">Imposto de Renda</div>
+      <div class="result-value negative">{{ result.tax | currencyPtBr }}</div>
+    </div>
+
+    <div class="result-item" style="grid-column: span 2;">
+      <div class="result-label">Valor Líquido</div>
+      <div class="result-value positive">{{ result.netValue | currencyPtBr }}</div>
+    </div>
+  </div>
+</div>

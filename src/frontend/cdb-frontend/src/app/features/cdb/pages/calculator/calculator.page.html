@@ -1,0 +1,34 @@
+<div class="container">
+  @if (loading) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  @if (error) {
+    <div class="alert alert-error" role="alert">
+      {{ error }}
+      <button
+        type="button"
+        class="btn btn-primary"
+        style="margin-top: 1rem; width: auto;"
+        (click)="onNewCalculation()">
+        Tentar novamente
+      </button>
+    </div>
+  }
+
+  @if (!result) {
+    <app-cdb-form (submitForm)="onCalculate($event)" />
+  } @else {
+    <app-cdb-result [result]="result" />
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      style="margin-top: 1rem;"
+      (click)="onNewCalculation()">
+      Nova Simulação
+    </button>
+  }
+</div>
