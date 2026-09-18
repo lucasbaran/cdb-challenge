@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
-function generateUUID(): string {
+export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }

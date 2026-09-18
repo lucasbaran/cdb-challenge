@@ -102,6 +102,16 @@ describe('CdbFormComponent', () => {
     expect(component.submitted).toBe(false);
   });
 
+  it('should not emit when form values are null after validation', () => {
+    component.form.get('initialValue')?.setValue(1000);
+    component.form.get('months')?.setValue(12);
+    component.form.get('initialValue')?.setValue(null);
+    
+    component.onSubmit();
+
+    expect(submitFormSpy).not.toHaveBeenCalled();
+  });
+
   it('should display error message for required initialValue when submitted', () => {
     component.form.get('initialValue')?.markAsTouched();
     component.submitted = true;

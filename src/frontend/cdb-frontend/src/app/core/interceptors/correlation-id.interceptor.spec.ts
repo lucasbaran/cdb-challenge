@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { correlationIdInterceptor } from './correlation-id.interceptor';
+import { correlationIdInterceptor, generateUUID } from './correlation-id.interceptor';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
@@ -70,5 +70,61 @@ describe('correlationIdInterceptor', () => {
 
     expect(capturedReq!.headers.get('Content-Type')).toBe('application/json');
     expect(capturedReq!.headers.get('Authorization')).toBe('Bearer token');
+  });
+});
+
+describe('generateUUID', () => {
+  const originalRandomUUID = global.crypto?.randomUUID;
+
+  afterEach(() => {
+    if (global.crypto && originalRandomUUID) {
+      global.crypto.randomUUID = originalRandomUUID;
+    } else if (global.crypto) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete (global.crypto as { randomUUID?: unknown }).randomUUID;
+    }
+  });
+
+  it('should generate valid UUID using crypto.randomUUID when available', () => {
+    const mockUUID = '123e4567-e89b-12d3-a456-426614174000';
+    const mockRandomUUID = jest.fn().mockReturnValue(mockUUID);
+    global.crypto.randomUUID = mockRandomUUID;
+
+    const uuid = generateUUID();
+    expect(uuid).toBe(mockUUID);
+    expect(mockRandomUUID).toHaveBeenCalled();
+  });
+
+  it('should generate valid UUID using fallback when crypto.randomUUID is not available', () => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete (global.crypto as { randomUUID?: unknown }).randomUUID;
+
+    const uuid = generateUUID();
+    expect(uuid).toBeTruthy();
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    expect(uuid).toMatch(uuidRegex);
+  });
+
+  it('should generate different UUIDs on each call with fallback', () => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete (global.crypto as { randomUUID?: unknown }).randomUUID;
+
+    const uuid1 = generateUUID();
+    const uuid2 = generateUUID();
+
+    expect(uuid1).not.toBe(uuid2);
+  });
+
+  it('should generate UUID with correct version (4) and variant (8,9,a,b) in fallback', () => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete (global.crypto as { randomUUID?: unknown }).randomUUID;
+
+    const uuid = generateUUID();
+    const parts = uuid.split('-');
+    
+    // Version 4: 3rd group starts with 4
+    expect(parts[2][0]).toBe('4');
+    // Variant: 4th group starts with 8, 9, a, or b
+    expect(['8', '9', 'a', 'b']).toContain(parts[3][0].toLowerCase());
   });
 });
